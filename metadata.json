@@ -1,0 +1,6 @@
+{
+  "name": "DairyLedger",
+  "description": "Dairy farm management app for milk production tracking, cattle feeding schedules, feed inventory, and farm financial records.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,251 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Farmer account profile, farm configuration, and notification preferences.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth UID of the farm owner." },
+        "displayName": { "type": "string", "description": "Owner display name." },
+        "email": { "type": "string", "description": "Owner Google account email." },
+        "farmName": { "type": "string", "description": "Name of the dairy farm." },
+        "currencySymbol": { "type": "string", "description": "Preferred currency symbol (e.g., $, ₹)." },
+        "defaultMilkPrice": { "type": "number", "description": "Default selling price per litre of milk." },
+        "feedingRemindersEnabled": { "type": "boolean", "description": "Whether feeding schedule reminders are active." },
+        "lowStockAlertsEnabled": { "type": "boolean", "description": "Whether low feed stock warnings are active." },
+        "productionDropAlertsEnabled": { "type": "boolean", "description": "Whether unusual milk production drop alerts are active." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp via FieldValue.serverTimestamp()." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp via FieldValue.serverTimestamp()." }
+      },
+      "required": [
+        "userId",
+        "displayName",
+        "email",
+        "farmName",
+        "currencySymbol",
+        "defaultMilkPrice",
+        "feedingRemindersEnabled",
+        "lowStockAlertsEnabled",
+        "productionDropAlertsEnabled",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Cattle": {
+      "title": "Cattle",
+      "description": "Registered cow or buffalo in the dairy herd.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner UID." },
+        "tagNumber": { "type": "string", "description": "Unique ear tag or animal ID number." },
+        "name": { "type": "string", "description": "Animal name." },
+        "species": { "type": "string", "enum": ["Cow", "Buffalo"], "description": "Species of dairy animal." },
+        "breed": { "type": "string", "description": "Breed name (e.g., Holstein, Jersey, Murrah)." },
+        "registrationDate": { "type": "string", "description": "Registration date in YYYY-MM-DD format." },
+        "isActive": { "type": "boolean", "description": "Active milking/herd status." },
+        "notes": { "type": "string", "description": "Optional animal remarks." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp via FieldValue.serverTimestamp()." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp via FieldValue.serverTimestamp()." }
+      },
+      "required": [
+        "userId",
+        "tagNumber",
+        "name",
+        "species",
+        "breed",
+        "registrationDate",
+        "isActive",
+        "notes",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "MilkRecord": {
+      "title": "MilkRecord",
+      "description": "Daily morning and evening milk production record per animal.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner UID." },
+        "cattleId": { "type": "string", "description": "Referenced Cattle document ID." },
+        "cattleTag": { "type": "string", "description": "Denormalized animal tag number." },
+        "cattleName": { "type": "string", "description": "Denormalized animal name." },
+        "date": { "type": "string", "description": "Production date in YYYY-MM-DD format." },
+        "morningLitres": { "type": "number", "description": "Morning milk yield in litres." },
+        "eveningLitres": { "type": "number", "description": "Evening milk yield in litres." },
+        "totalLitres": { "type": "number", "description": "Automatically calculated daily total in litres." },
+        "notes": { "type": "string", "description": "Optional remarks." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp via FieldValue.serverTimestamp()." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp via FieldValue.serverTimestamp()." }
+      },
+      "required": [
+        "userId",
+        "cattleId",
+        "cattleTag",
+        "cattleName",
+        "date",
+        "morningLitres",
+        "eveningLitres",
+        "totalLitres",
+        "notes",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "FeedItem": {
+      "title": "FeedItem",
+      "description": "Cattle feed inventory item and stock level.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner UID." },
+        "name": { "type": "string", "description": "Name of feed." },
+        "category": { "type": "string", "enum": ["Green Fodder", "Dry Fodder", "Concentrate", "Silage", "Mineral Mix", "Supplements"] },
+        "quantity": { "type": "number", "description": "Current available stock quantity." },
+        "unit": { "type": "string", "enum": ["kg", "grams", "bales", "litres"] },
+        "costPerUnit": { "type": "number", "description": "Purchase cost per unit." },
+        "minStockLevel": { "type": "number", "description": "Low-stock alert threshold." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp via FieldValue.serverTimestamp()." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp via FieldValue.serverTimestamp()." }
+      },
+      "required": [
+        "userId",
+        "name",
+        "category",
+        "quantity",
+        "unit",
+        "costPerUnit",
+        "minStockLevel",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "FeedingSchedule": {
+      "title": "FeedingSchedule",
+      "description": "Daily recurring feeding schedule for cattle or groups.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner UID." },
+        "title": { "type": "string", "description": "Schedule title." },
+        "targetGroup": { "type": "string", "description": "Cattle tag, name, or herd group." },
+        "feedId": { "type": "string", "description": "Referenced FeedItem document ID." },
+        "feedName": { "type": "string", "description": "Denormalized feed name." },
+        "quantity": { "type": "number", "description": "Planned quantity per feeding." },
+        "unit": { "type": "string", "enum": ["kg", "grams", "bales", "litres"] },
+        "feedingTime": { "type": "string", "description": "Scheduled time in HH:mm 24-hour format." },
+        "isActive": { "type": "boolean", "description": "Whether schedule is active." },
+        "lastCompletedDate": { "type": "string", "description": "Last completion date YYYY-MM-DD or empty string." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp via FieldValue.serverTimestamp()." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp via FieldValue.serverTimestamp()." }
+      },
+      "required": [
+        "userId",
+        "title",
+        "targetGroup",
+        "feedId",
+        "feedName",
+        "quantity",
+        "unit",
+        "feedingTime",
+        "isActive",
+        "lastCompletedDate",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "FeedingRecord": {
+      "title": "FeedingRecord",
+      "description": "Completed or missed feeding consumption activity log.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner UID." },
+        "scheduleId": { "type": "string", "description": "Optional FeedingSchedule ID or empty string." },
+        "scheduleTitle": { "type": "string", "description": "Activity label." },
+        "feedId": { "type": "string", "description": "Referenced FeedItem document ID." },
+        "feedName": { "type": "string", "description": "Denormalized feed name." },
+        "quantityConsumed": { "type": "number", "description": "Quantity consumed." },
+        "unit": { "type": "string", "enum": ["kg", "grams", "bales", "litres"] },
+        "date": { "type": "string", "description": "Activity date YYYY-MM-DD." },
+        "time": { "type": "string", "description": "Activity time HH:mm." },
+        "status": { "type": "string", "enum": ["Completed", "Missed"] },
+        "notes": { "type": "string", "description": "Optional notes." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp via FieldValue.serverTimestamp()." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp via FieldValue.serverTimestamp()." }
+      },
+      "required": [
+        "userId",
+        "scheduleId",
+        "scheduleTitle",
+        "feedId",
+        "feedName",
+        "quantityConsumed",
+        "unit",
+        "date",
+        "time",
+        "status",
+        "notes",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "FarmTransaction": {
+      "title": "FarmTransaction",
+      "description": "Financial income or expense transaction.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner UID." },
+        "date": { "type": "string", "description": "Transaction date YYYY-MM-DD." },
+        "type": { "type": "string", "enum": ["Income", "Expense"] },
+        "category": { "type": "string", "description": "Income or expense category." },
+        "description": { "type": "string", "description": "Transaction details." },
+        "amount": { "type": "number", "description": "Total transaction amount." },
+        "quantityLitres": { "type": "number", "description": "Milk quantity sold if applicable, else 0." },
+        "pricePerLitre": { "type": "number", "description": "Milk price per litre if applicable, else 0." },
+        "paymentMethod": { "type": "string", "enum": ["Cash", "UPI", "Bank Transfer", "Card"] },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp via FieldValue.serverTimestamp()." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp via FieldValue.serverTimestamp()." }
+      },
+      "required": [
+        "userId",
+        "date",
+        "type",
+        "category",
+        "description",
+        "amount",
+        "quantityLitres",
+        "pricePerLitre",
+        "paymentMethod",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profile, farm settings, and alert preferences."
+    },
+    "/users/{userId}/cattle/{cattleId}": {
+      "schema": { "$ref": "#/entities/Cattle" },
+      "description": "Registered dairy cattle belonging to the user."
+    },
+    "/users/{userId}/milkRecords/{recordId}": {
+      "schema": { "$ref": "#/entities/MilkRecord" },
+      "description": "Daily morning and evening milk production records."
+    },
+    "/users/{userId}/feedItems/{feedId}": {
+      "schema": { "$ref": "#/entities/FeedItem" },
+      "description": "Feed inventory items and low-stock thresholds."
+    },
+    "/users/{userId}/feedingSchedules/{scheduleId}": {
+      "schema": { "$ref": "#/entities/FeedingSchedule" },
+      "description": "Daily cattle feeding schedules and reminder times."
+    },
+    "/users/{userId}/feedingRecords/{feedingRecordId}": {
+      "schema": { "$ref": "#/entities/FeedingRecord" },
+      "description": "Completed and missed feeding consumption history."
+    },
+    "/users/{userId}/transactions/{transactionId}": {
+      "schema": { "$ref": "#/entities/FarmTransaction" },
+      "description": "Farm income and expense financial transactions."
+    }
+  }
+}
